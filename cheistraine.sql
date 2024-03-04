@@ -100,8 +100,27 @@ UNION ALL
 SELECT book.student_id FROM book
 WHERE student_id;
 
-/*INTERSECT-*/
-SELECT id AS 'Student id with book' FROM student WHERE id=1
+/*INTERSECT- Intersectia tabelelor*/
+SELECT id AS 'Student id with book' FROM student WHERE id > 1
 INTERSECT
 SELECT book.student_id FROM book
 WHERE student_id;
+
+/*EXCEPT- returneaza informatiile din student care nu apare in book*/
+SELECT id AS 'Student id with book' FROM student WHERE id > 1
+EXCEPT
+SELECT book.student_id FROM book
+WHERE student_id;
+
+/*Subqueries- il pune in functia IN() si selecta ce vrem*/
+SELECT * FROM student
+WHERE id IN (SELECT DISTINCT(book.student_id) FROM book
+                                              WHERE student_id);
+/*OR*/
+SELECT * FROM student
+INNER JOIN(SELECT book.student_id FROM book
+           WHERE student_id > 0 ) AS book ON student.id = book.student_id;
+
+
+SELECT student.first_name,COUNT(course_id) AS 'Course count' FROM enrolment
+LEFT OUTER JOIN student ON enrolment.student_id = student.id;
