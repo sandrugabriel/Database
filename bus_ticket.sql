@@ -149,3 +149,31 @@ ORDER BY number DESC;
 SELECT customer.name,customer.email FROM customer
 JOIN bus_ticket.seat _seats ON _seats.customer_id = customer.id
 JOIN bus_ticket.bus b on b.id = _seats.bus_id WHERE b.id = 6;
+
+/*All customers from bus 6*/
+SELECT customer.name,customer.email FROM customer
+JOIN bus_ticket.seat _seats ON _seats.customer_id = customer.id
+JOIN bus_ticket.bus b on b.id = _seats.bus_id WHERE b.id = 6;
+
+/*All seats from bus 6 A-Z*/
+SELECT seat.number, seat.type FROM seat
+JOIN bus_ticket.bus b on b.id = seat.bus_id WHERE b.id = 6
+ORDER BY number;
+
+/*All seats from bus 6 Z-A*/
+SELECT seat.number, seat.type FROM seat
+JOIN bus_ticket.bus b on b.id = seat.bus_id WHERE b.id = 6
+ORDER BY number DESC ;
+
+/*THE POPULAR BUS*/
+SELECT bus.name,bus.number,bus.type,bus.ticket,COUNT(bus.id) AS 'Count ticket buy' FROM bus
+JOIN bus_ticket.seat s on bus.id = s.bus_id
+GROUP BY bus.name, bus.number, bus.type, bus.ticket
+ORDER BY COUNT(bus.id) DESC ;
+
+/*THE BEST SEAT FROM BUS 6*/
+SELECT seat.number,seat.type,COUNT(seat.id) FROM seat
+JOIN bus_ticket.bus b on b.id = seat.bus_id WHERE bus_id = 6
+GROUP BY seat.number, seat.type;
+
+/**/
