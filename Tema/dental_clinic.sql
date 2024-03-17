@@ -1,6 +1,7 @@
 CREATE DATABASE dental_clinic;
 USE dental_clinic;
 
+
 CREATE TABLE role(
     id INT PRIMARY KEY ,
     tile VARCHAR(50),
@@ -41,10 +42,12 @@ CREATE TABLE doctors(
 CREATE TABLE problems(
     id INT PRIMARY KEY ,
     id_permission INT,
+    id_patient INT,
     name VARCHAR(50),
     type VARCHAR(50),
     description VARCHAR(500),
-    FOREIGN KEY (id_permission) REFERENCES permissions(id)
+    FOREIGN KEY (id_permission) REFERENCES permissions(id),
+    FOREIGN KEY (id_patient) REFERENCES patient(id)
 );
 
 CREATE TABLE medicines(
@@ -76,7 +79,6 @@ CREATE TABLE nurse(
     FOREIGN KEY (doctors_id) REFERENCES doctors(id)
 );
 
-
 INSERT INTO role VALUES (1,'adduser','asd');
 INSERT INTO role VALUES (2,'editnurse','asd');
 INSERT INTO role VALUES (3,'deletenurse','asd');
@@ -105,11 +107,12 @@ INSERT INTO patient VALUES (3,5,'Radu','radu@gamil.com','sibiu','1234','07777877
 INSERT INTO patient VALUES (4,5,'Dan','dan@gamil.com','sibiu','1234','077777577');
 INSERT INTO patient VALUES (5,5,'Flip','filip@gamil.com','sibiu','12345','077777677');
 
-INSERT INTO problems VALUES (1,5,1,'asdd','asd','1235');
-INSERT INTO problems VALUES (2,5,1,'asd','asd','1235');
-INSERT INTO problems VALUES (3,5,1,'asdd','asd','1235');
-INSERT INTO problems VALUES (4,5,3,'aDdd','asd','1235');
-INSERT INTO problems VALUES (5,5,1,'DSFdd','asd','1235');
+INSERT INTO problems VALUES (1,5,1,'asdd','asd','wqed');
+INSERT INTO problems VALUES (2,5,1,'asd','asd','qwe');
+INSERT INTO problems VALUES (3,5,1,'asdd','asd','qwe');
+INSERT INTO problems VALUES (4,5,3,'aDdd','asd','qweqw');
+INSERT INTO problems VALUES (5,5,1,'DSFdd','asd','qewqr');
+INSERT INTO problems VALUES (6,1,1,'dd','ad','qqr');
 
 INSERT INTO medicines VALUES (1,3,'asddsf','farma',50);
 INSERT INTO medicines VALUES (2,3,'gsdf','farma',150);
@@ -128,6 +131,7 @@ INSERT INTO nurse VALUES (4,2,'daniela','07237452','1234','sadu');
 INSERT INTO nurse VALUES (5,3,'sorina','082347263','1234','sibiu');
 INSERT INTO nurse VALUES (6,3,'ionela','028387565','1234','sadu');
 
+/*CUSTOMERS*/
 /*all nurse from doctor RADU*/
 SELECT doctors.name AS 'Doctor name',n.name AS 'Nurse name' FROM doctors
 JOIN dental_clinic.nurse n on doctors.id = n.doctors_id WHERE doctors.name = 'Radu';
@@ -164,14 +168,6 @@ GROUP BY problems.name
 ORDER BY COUNT(problems.name),name
 LIMIT 1;
 
-/*All patient a-z*/
-SELECT name, email, address, password, modile FROM patient
-ORDER BY name;
-
-/*All patient Z-A*/
-SELECT name, email, address, password, modile FROM patient
-ORDER BY name DESC ;
-
 /*All medicines A-Z*/
 SELECT * FROM medicines
 ORDER BY type;
@@ -183,6 +179,35 @@ ORDER BY type DESC ;
 /*the most expensive medicines*/
 SELECT * FROM medicines
 ORDER BY cost DESC;
+
+/*the most cheapest medicines*/
+SELECT * FROM medicines
+ORDER BY cost
+LIMIT 1;
+
+/*all problemes by pacient 1 A-Z*/
+SELECT problems.name, problems.type, p.name FROM problems
+JOIN patient p on p.id = problems.id_patient WHERE p.id = 1
+ORDER BY  problems.name;
+
+/*all problemes by pacient 1 Z-A*/
+SELECT problems.name, problems.type, p.name FROM problems
+JOIN patient p on p.id = problems.id_patient WHERE p.id = 1
+ORDER BY problems.name DESC;
+
+/*All medicines LOW-HIGHT*/
+SELECT * FROM medicines
+ORDER BY cost;
+
+
+/*ADMIN*/
+/*All patient a-z*/
+SELECT name, email, address, password, modile FROM patient
+ORDER BY name;
+
+/*All patient Z-A*/
+SELECT name, email, address, password, modile FROM patient
+ORDER BY name DESC ;
 
 /*the most loyal patient*/
 SELECT p.name,problems.type,COUNT(p.id_permission) FROM problems
@@ -197,3 +222,49 @@ GROUP BY p.name,problems.type
 ORDER BY COUNT(p.id_permission)
 LIMIT 1;
 
+/*All permission*/
+SELECT * FROM permissions;
+
+/*the most used permission*/
+SELECT tile,COUNT(permissions.id) FROM permissions
+JOIN problems b on permissions.id = b.id_permission
+GROUP BY tile
+ORDER BY COUNT(permissions.id) DESC
+LIMIT 1;
+
+/*the most unused permission*/
+SELECT tile,COUNT(permissions.id) FROM permissions
+JOIN problems b on permissions.id = b.id_permission
+GROUP BY tile
+ORDER BY COUNT(permissions.id)
+LIMIT 1;
+
+/*20% discount on all medicines*/
+UPDATE medicines SET cost = cost * 0.8;
+
+/*+20% on all medicines*/
+UPDATE medicines SET cost = cost * 1.2;
+
+/*All users*/
+SELECT * FROM user
+ORDER BY name;
+
+/*Delete a patient*/
+DELETE FROM patient
+WHERE id = 1;
+
+/*Delete a problem*/
+DELETE FROM problems
+WHERE id = 2;
+
+/*Delete a payment*/
+DELETE FROM medicines
+WHERE id = 1;
+
+/*Update a patient*/
+UPDATE patient SET modile = '037472442'
+WHERE id = 1;
+
+/*Update date on cost*/
+UPDATE medicines SET  cost = 60
+WHERE id = 1;

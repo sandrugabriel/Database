@@ -127,6 +127,7 @@ INSERT INTO payment VALUES (3,3,2,'2025-03-14','sibiu','assdfd','rsgrdes');
 INSERT INTO payment VALUES (4,4,1,'2025-03-14','sibiu','abdsd','rsgrdes');
 INSERT INTO payment VALUES (5,5,1,'2025-03-14','sibiu','asewfd','rsgrdes');
 
+/*CUSTOMER*/
 /*All bike a-z*/
 SELECT * FROM bike
 ORDER BY name;
@@ -145,14 +146,6 @@ SELECT NAME, NUMBER, TYPE, DESCRIPTION, TICKET FROM bike
 ORDER BY number
 LIMIT 1;
 
-/*All customers A-Z*/
-SELECT * FROM customer
-ORDER BY name;
-
-/*All customers Z-A*/
-SELECT * FROM customer
-ORDER BY name DESC;
-
 /*All insurance LOW-HIGHT*/
 SELECT * FROM insurance
 ORDER BY number;
@@ -160,6 +153,66 @@ ORDER BY number;
 /*All insurance HIGHT-LOW*/
 SELECT * FROM insurance
 ORDER BY number DESC ;
+
+/*the most bought bike*/
+SELECT b.name,b.number, COUNT(b.id) AS 'Count' FROM payment
+JOIN bike b on b.id = payment.id_bike
+GROUP BY b.name,b.number;
+
+/*the most unbought bike*/
+SELECT b.name,b.number, COUNT(b.id) AS 'Count' FROM payment
+JOIN bike b on b.id = payment.id_bike
+GROUP BY b.name,b.number
+ORDER BY COUNT(b.id)
+LIMIT 1;
+
+/*all bkie by customer 3 LOW-HIGHT*/
+SELECT bike.name,bike.number FROM bike
+JOIN customer c on c.id = bike.id_customer WHERE c.id = 3
+ORDER BY number;
+
+/*all bkie by customer 3 HIGHT-LOW*/
+SELECT bike.name,bike.number FROM bike
+JOIN customer c on c.id = bike.id_customer WHERE c.id = 3
+ORDER BY number DESC;
+
+/*All payment by customer 2 A-Z*/
+SELECT b.name,b.number,payment.date FROM payment
+JOIN bike b on b.id = payment.id_bike
+JOIN customer c on c.id = payment.id_customer WHERE c.id = 2
+ORDER BY name;
+
+/*All payment by customer 2 A-Z*/
+SELECT b.name,b.number,payment.date FROM payment
+JOIN bike b on b.id = payment.id_bike
+JOIN customer c on c.id = payment.id_customer WHERE c.id = 2
+ORDER BY name DESC;
+
+/*permission by customer 1*/
+SELECT p.tile,customer.name FROM customer
+JOIN permissions p on p.id = customer.id_permission WHERE customer.id=1;
+
+/*All payment by customer 2 LOW-HIGHT*/
+SELECT b.name,b.number,payment.date FROM payment
+JOIN bike b on b.id = payment.id_bike
+JOIN customer c on c.id = payment.id_customer WHERE c.id = 2
+ORDER BY number;
+
+/*All payment by customer 2 HIGHT-LOW*/
+SELECT b.name,b.number,payment.date FROM payment
+JOIN bike b on b.id = payment.id_bike
+JOIN customer c on c.id = payment.id_customer WHERE c.id = 2
+ORDER BY number DESC;
+
+
+/*ADMIN*/
+/*All customers A-Z*/
+SELECT * FROM customer
+ORDER BY name;
+
+/*All customers Z-A*/
+SELECT * FROM customer
+ORDER BY name DESC;
 
 /*All permission A-Z*/
 SELECT * FROM permissions
@@ -179,17 +232,12 @@ GROUP BY tile
 ORDER BY COUNT(permissions.id)
 LIMIT 1;
 
-/*the most disloyal patients*/
+/*the most disloyal customer*/
 SELECT c.name,COUNT(c.id) AS 'Count' FROM payment
 JOIN customer c on c.id = payment.id_customer
 GROUP BY c.name
 ORDER BY COUNT(c.id),name
 LIMIT 1;
-
-/*the most bought bike*/
-SELECT b.name,b.number, COUNT(b.id) AS 'Count' FROM payment
-JOIN bike b on b.id = payment.id_bike
-GROUP BY b.name,b.number;
 
 /*all bike bought by customers*/
 SELECT c.name,b.number, COUNT(c.id) AS 'Count' FROM payment
@@ -197,11 +245,38 @@ JOIN customer c on c.id = payment.id_customer
 JOIN bike b on b.id = payment.id_bike
 GROUP BY c.name,b.number;
 
-/*the most loyal patients*/
+/*the most loyal customer*/
 SELECT c.name,COUNT(c.id) AS 'Count' FROM payment
 JOIN customer c on c.id = payment.id_customer
 GROUP BY c.name
 ORDER BY COUNT(c.id) DESC
 LIMIT 1;
 
+/*All payment*/
+SELECT * FROM payment;
 
+/*All payment by customer 5 LOW-HIGHT*/
+SELECT b.name,b.number,payment.date FROM payment
+JOIN bike b on b.id = payment.id_bike
+JOIN customer c on c.id = payment.id_customer WHERE c.id = 5
+ORDER BY number;
+
+/*Delete a client*/
+DELETE FROM customer
+WHERE id = 1;
+
+/*Delete a bike*/
+DELETE FROM bike
+WHERE id = 2;
+
+/*Delete a payment*/
+DELETE FROM payment
+WHERE id = 1;
+
+/*Update a bike*/
+UPDATE bike SET number = number +200
+WHERE id = 1;
+
+/*Update date on payment*/
+UPDATE payment SET date = '2024-03-15'
+WHERE id = 1;
