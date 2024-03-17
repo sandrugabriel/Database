@@ -54,7 +54,7 @@ CREATE TABLE spactacles(
     id_permission INT,
     type VARCHAR(50),
     number VARCHAR(500),
-    cost VARCHAR(10),
+    cost INT,
     FOREIGN KEY (id_permission) REFERENCES permissions(id),
     FOREIGN KEY (id_patient) REFERENCES patient(id)
 );
@@ -98,12 +98,12 @@ INSERT INTO patient VALUES (3,5,'Radu','radu@gamil.com','sibiu','1234','07777877
 INSERT INTO patient VALUES (4,5,'Dan','dan@gamil.com','sibiu','1234','077777577');
 INSERT INTO patient VALUES (5,5,'Flip','filip@gamil.com','sibiu','12345','077777677');
 
-INSERT INTO spactacles VALUES (1,5,4,'asd','1235','300');
-INSERT INTO spactacles VALUES (2,5,4,'asd','12345','3000');
-INSERT INTO spactacles VALUES (3,4,4,'assd','135','100');
-INSERT INTO spactacles VALUES (4,3,4,'asdd','12','50');
-INSERT INTO spactacles VALUES (5,1,4,'asfd','1','250');
-INSERT INTO spactacles VALUES (6,1,5,'sdasfd','23','150');
+INSERT INTO spactacles VALUES (1,5,4,'asd','1235',300);
+INSERT INTO spactacles VALUES (2,5,4,'asd','12345',3000);
+INSERT INTO spactacles VALUES (3,4,4,'assd','135',100);
+INSERT INTO spactacles VALUES (4,3,4,'asdd','12',50);
+INSERT INTO spactacles VALUES (5,1,4,'asfd','1',250);
+INSERT INTO spactacles VALUES (6,1,5,'sdasfd','23',150);
 
 INSERT INTO test VALUES (1,2,'clean','sad','100 lei','asdasd');
 INSERT INTO test VALUES (2,2,'cleanvip','sad','250 lei','asdasd');
@@ -114,6 +114,7 @@ INSERT INTO doctors VALUES (1,3,'Alex','sibiu','alex@mail.com','1234','078645676
 INSERT INTO doctors VALUES (2,3,'Ana','sibiu','ana@mail.com','1234','0754456765');
 INSERT INTO doctors VALUES (3,3,'Maria','sibiu','maria@mail.com','1234','078669765');
 
+/*CUSTOMER*/
 /*All doctors a-z*/
 SELECT name, address, email, mobile FROM doctors
 ORDER BY name;
@@ -134,16 +135,6 @@ ORDER BY name DESC;
 SELECT spactacles.number, spactacles.type, p.name FROM spactacles
 JOIN patient p on p.id = spactacles.id_patient WHERE p.id = 5;
 
-/*All patient a-z*/
-SELECT * FROM patient
-ORDER BY name;
-
-/*the most loyal patients*/
-SELECT spactacles.type, p.name, COUNT(p.id) AS 'Count' FROM spactacles
-JOIN patient p on p.id = spactacles.id_patient
-GROUP BY spactacles.type, p.name
-LIMIT 3;
-
 /*the best selling service*/
 SELECT spactacles.type, COUNT(spactacles.type) AS 'Count' FROM spactacles
 JOIN patient p on p.id = spactacles.id_patient
@@ -152,12 +143,50 @@ LIMIT 3;
 
 /*the most expensive services*/
 SELECT * FROM test
-order by cost desc;
+order by cost desc
+LIMIT 1;
 
 /*the cheapest services*/
 SELECT * FROM test
-order by cost;
+order by cost
+LIMIT 1;
 
+/*All spactacles LOW- HIGHT NUMBER*/
+SELECT * FROM spactacles
+ORDER BY number;
+
+/*All spactacles HIGHT-LOW NUMBER*/
+SELECT * FROM spactacles
+ORDER BY number DESC;
+
+/*all spactacles by pacient 5 LOW-HIGHT*/
+SELECT spactacles.number, spactacles.type, p.name FROM spactacles
+JOIN patient p on p.id = spactacles.id_patient WHERE p.id = 5
+ORDER BY cost;
+
+/*all spactacles by pacient 5 HIGHT-LOW*/
+SELECT spactacles.number, spactacles.type, p.name FROM spactacles
+JOIN patient p on p.id = spactacles.id_patient WHERE p.id = 5
+ORDER BY cost DESC;
+
+/*permission by patient 1*/
+SELECT permissions.tile FROM permissions
+JOIN patient p on permissions.id = p.id_permission WHERE p.id = 1;
+
+/*the most common spactacle*/
+SELECT spactacles.type,COUNT(spactacles.type) FROM spactacles
+GROUP BY type
+ORDER BY COUNT(spactacles.type) DESC
+LIMIT 1;
+
+/*the most uncommon spactacle*/
+SELECT spactacles.type,COUNT(spactacles.type) FROM spactacles
+GROUP BY type
+ORDER BY COUNT(spactacles.type)
+LIMIT 1;
+
+
+/*ADMIN*/
 /*All permissions*/
 SELECT * FROM permissions;
 
@@ -174,11 +203,55 @@ GROUP BY tile
 ORDER BY COUNT(permissions.id)
 LIMIT 1;
 
-/*All spactacles LOW- HIGHT NUMBER*/
-SELECT * FROM spactacles
-ORDER BY number;
+/*All patient a-z*/
+SELECT * FROM patient
+ORDER BY name;
 
-/*All spactacles HIGHT-LOW NUMBER*/
-SELECT * FROM spactacles
-ORDER BY number DESC;
+/*the most loyal patients*/
+SELECT spactacles.type, p.name, COUNT(p.id) AS 'Count' FROM spactacles
+JOIN patient p on p.id = spactacles.id_patient
+GROUP BY spactacles.type, p.name
+LIMIT 3;
+
+/*the most unloyal patients*/
+SELECT spactacles.type, p.name, COUNT(p.id) AS 'Count' FROM spactacles
+JOIN patient p on p.id = spactacles.id_patient
+GROUP BY spactacles.type, p.name
+ORDER BY COUNT(p.id)
+LIMIT 1;
+
+/*20% dicount cost on spactacls*/
+UPDATE spactacles SET cost = cost * 0.8
+WHERE id = 1;
+
+/*+20% cost on spactacls*/
+UPDATE spactacles SET cost = cost *1.2
+WHERE id = 1;
+
+/*All users*/
+SELECT * FROM user;
+
+/*Add role*/
+INSERT INTO role VALUES (10,'WED','QWEF');
+
+/*Delete a client*/
+DELETE FROM patient
+WHERE id = 1;
+
+/*Delete a spactacle*/
+DELETE FROM spactacles
+WHERE id = 2;
+
+/*Delete a DOCTOR*/
+DELETE FROM doctors
+WHERE id = 1;
+
+/*Update a client*/
+UPDATE patient SET modile = '03959353'
+WHERE id = 1;
+
+/*Update cost on spactacls*/
+UPDATE spactacles SET cost = cost + 50
+WHERE id = 1;
+
 
